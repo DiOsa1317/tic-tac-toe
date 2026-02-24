@@ -5,10 +5,22 @@ const EMPTY = ' ';
 const container = document.getElementById('fieldWrapper');
 
 
-let board = Array.from({ length: 3 }, () => Array(3).fill(null));
+let board = Array.from({length: 3}, () => Array(3).fill(null));
 let movesCount = 0;
+let winner = null;
 
+const winComb = [
+    [[0, 0], [0, 1], [0, 2]],
+    [[1, 0], [1, 1], [1, 2]],
+    [[2, 0], [2, 1], [2, 2]],
 
+    [[0, 0], [1, 0], [2, 0]],
+    [[0, 1], [1, 1], [2, 1]],
+    [[0, 2], [1, 2], [2, 2]],
+
+    [[0, 0], [1, 1], [2, 2]],
+    [[2, 0], [1, 1], [0, 2]]
+];
 startGame();
 addResetListener();
 
@@ -32,7 +44,8 @@ function renderGrid(dimension) {
 }
 
 function cellClickHandler(row, col) {
-    if (board[row][col] !== null) return;
+    console.log(winner);
+    if (board[row][col] !== null || winner !== null) return;
 
     let symbol = movesCount % 2 == 0 ? CROSS : ZERO;
 
@@ -41,7 +54,7 @@ function cellClickHandler(row, col) {
     movesCount++;
     console.log(`Clicked on cell: ${row}, ${col}`);
 
-    let winner = checkHasWinner();
+    winner = checkHasWinner();
     if (winner) {
         alert(`Победил ${winner}!`)
     }
@@ -51,33 +64,31 @@ function checkHasWinner() {
     if (movesCount < 5) {
         return null;
     }
-    if (board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
-        paintWinnerCellsRed();
-        console.log(board[0][0])
-        return board[0][0];
-    }
-    if (board[2][0] === board[1][1] && board[1][1] === board[0][2]) {
-        paintWinnerCellsRed();
-        return board[2][0];
-    }
-    for (let i = 0; i < 3; i++) {
-        if (board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
-            paintWinnerCellsRed();
-            return board[i][0];
-        }
-        if (board[0][i] === board[1][i] && board[1][i] === board[2][i]) {
-            paintWinnerCellsRed();
-            return board[0][i];
+    for (const comb of winComb) {
+        const [[r1, c1], [r2, c2], [r3, c3]] = comb;
+
+        const value = board[r1][c1];
+
+        if (
+            value !== null &&
+            value === board[r2][c2] &&
+            value === board[r3][c3]
+        ) {
+            paintWinnerCellsRed(comb);
+            return value;
         }
     }
+
     if (movesCount == 9) {
         alert("Победила дружба!")
-        return null;
     }
+    return null;
 }
 
-function paintWinnerCellsRed() {
-
+function paintWinnerCellsRed(comb) {
+    for (const [row, col] of comb) {
+        renderSymbolInCell(board[row][col], row, col, 'red');
+    }
 }
 
 function renderSymbolInCell(symbol, row, col, color = '#333') {
@@ -98,7 +109,10 @@ function addResetListener() {
 }
 
 function resetClickHandler() {
-    console.log('reset!');
+    board = Array.from({length: 3}, () => Array(3).fill(null));
+    movesCount = 0;
+    winner = null;
+    renderGrid(3);
 }
 
 
