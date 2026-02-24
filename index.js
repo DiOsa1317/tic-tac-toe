@@ -5,7 +5,8 @@ const EMPTY = ' ';
 const container = document.getElementById('fieldWrapper');
 
 
-let board = Array.from({ length, rows }, () => Array(cols).fill(null));
+let board = Array.from({ length: 3 }, () => Array(3).fill(null));
+let movesCount = 0;
 
 startGame();
 addResetListener();
@@ -30,7 +31,14 @@ function renderGrid(dimension) {
 }
 
 function cellClickHandler(row, col) {
-    // Пиши код тут
+    if (movesCount % 2 == 0) {
+        board[row, col] = CROSS
+        renderSymbolInCell(CROSS, row, col);
+    } else {
+        board[row, col] = ZERO
+        renderSymbolInCell(ZERO, row, col);
+    }
+    movesCount++;
     console.log(`Clicked on cell: ${row}, ${col}`);
 
 
