@@ -5,7 +5,7 @@ const EMPTY = ' ';
 const container = document.getElementById('fieldWrapper');
 
 
-let board = Array.from({ length: 3 }, () => Array(3).fill(null));
+let board = Array.from({length: 3}, () => Array(3).fill(null));
 let movesCount = 0;
 
 startGame();
@@ -31,20 +31,18 @@ function renderGrid(dimension) {
 }
 
 function cellClickHandler(row, col) {
-    if (movesCount % 2 == 0) {
-        board[row, col] = CROSS
-        renderSymbolInCell(CROSS, row, col);
-    } else {
-        board[row, col] = ZERO
-        renderSymbolInCell(ZERO, row, col);
-    }
+    if (board[row][col] !== null) return;
+
+    let symbol = movesCount % 2 == 0 ? CROSS : ZERO;
+
+    board[row][col] = symbol;
+    renderSymbolInCell(symbol, row, col);
     movesCount++;
     console.log(`Clicked on cell: ${row}, ${col}`);
 
-
-    /* Пользоваться методом для размещения символа в клетке так:
-        renderSymbolInCell(ZERO, row, col);
-     */
+    if (movesCount == 9) {
+        alert("Победила дружба!")
+    }
 }
 
 function renderSymbolInCell(symbol, row, col, color = '#333') {
@@ -70,6 +68,7 @@ function resetClickHandler() {
 
 
 /* Test Function */
+
 /* Победа первого игрока */
 function testWin() {
     clickOnCell(0, 2);
