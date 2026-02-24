@@ -5,8 +5,9 @@ const EMPTY = ' ';
 const container = document.getElementById('fieldWrapper');
 
 
-let board = Array.from({length: 3}, () => Array(3).fill(null));
+let board = Array.from({ length: 3 }, () => Array(3).fill(null));
 let movesCount = 0;
+
 
 startGame();
 addResetListener();
@@ -40,9 +41,43 @@ function cellClickHandler(row, col) {
     movesCount++;
     console.log(`Clicked on cell: ${row}, ${col}`);
 
+    let winner = checkHasWinner();
+    if (winner) {
+        alert(`Победил ${winner}!`)
+    }
+}
+
+function checkHasWinner() {
+    if (movesCount < 5) {
+        return null;
+    }
+    if (board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
+        paintWinnerCellsRed();
+        console.log(board[0][0])
+        return board[0][0];
+    }
+    if (board[2][0] === board[1][1] && board[1][1] === board[0][2]) {
+        paintWinnerCellsRed();
+        return board[2][0];
+    }
+    for (let i = 0; i < 3; i++) {
+        if (board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
+            paintWinnerCellsRed();
+            return board[i][0];
+        }
+        if (board[0][i] === board[1][i] && board[1][i] === board[2][i]) {
+            paintWinnerCellsRed();
+            return board[0][i];
+        }
+    }
     if (movesCount == 9) {
         alert("Победила дружба!")
+        return null;
     }
+}
+
+function paintWinnerCellsRed() {
+
 }
 
 function renderSymbolInCell(symbol, row, col, color = '#333') {
